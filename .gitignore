@@ -21,3 +21,10 @@ $RECYCLE.BIN/
 # =========================
 # Operating System Files
 # =========================
+
+# Others
+/idea
+/__pycache__
+/export
+/outputs
+/visualize
