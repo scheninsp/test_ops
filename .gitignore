@@ -23,7 +23,7 @@ $RECYCLE.BIN/
 # =========================
 
 # Others
-/idea
+/.idea
 /__pycache__
 /export
 /outputs
