@@ -1,6 +1,7 @@
 #mytest_inference.py
 import tensorflow as tf
 import os
+from PIL import Image
 
 if __name__ == "__main__":
 	os.environ['CUDA_VISIBLE_DEVICE'] = "0"
@@ -16,8 +17,8 @@ if __name__ == "__main__":
 
 	tf.reset_default_graph()
 
-	with tf.Session as sess:
-		saver_restore = tf.train.import_meta_graph(os.path.join(output_path, 'model.ckpt'))
+	with tf.Session() as sess:
+		saver_restore = tf.train.import_meta_graph(os.path.join(output_path, 'model.ckpt.meta'))
 		saver_restore.restore(sess, tf.train.latest_checkpoint(output_path))
 
 		innode = sess.graph.get_tensor_by_name("ImageTensor:0")
@@ -52,10 +53,20 @@ if __name__ == "__main__":
 		coord = tf.train.Coordinator()
 		thread = tf.train.start_queue_runners(sess=sess, coord=coord)
 
+		count=0
 		try:
 			while not coord.should_stop():
+				count = count+1
 				results = sess.run(outnode, feed_dict = {innode : image.eval()})
 				print(results.shape)
+				results = results[0]
+				for i in range(3):
+					for j in range(3):
+						print(results[i, j, 0], end='')
+					print('\n',end='')
+				im_save = Image.fromarray(results.astype('uint8'))
+				im_save.save("./visualize/results_%d.png" % count)
+
 		except tf.errors.OutOfRangeError:
 			print("done")
 		finally:
