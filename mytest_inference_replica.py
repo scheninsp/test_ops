@@ -1,23 +1,26 @@
 # mytest_inference.py
 import tensorflow as tf
 import os
+from PIL import Image
+#python 2.7
+from __future__ import print_function
 
 if __name__ == "__main__":
 	os.environ['CUDA_VISIBLE_DEVICE'] = "0"
-	output_path = "./outputs"
+	output_path = "./outputs_replica"
 	input_path = "./inputs"
 
 	N_EPOCHS=1
 
-	with open(os.path.join(input_path, "input_list.txt")) as f:
+	with open(os.path.join(input_path, "input_list_windows.txt")) as f:
 		lines = f.readlines()
 		img_tr = [x.split('\t')[0] for x in lines]
 		lbs_tr = [x.split('\t')[1].strip() for x in lines]
 
 	tf.reset_default_graph()
 
-	with tf.Session as sess:
-		saver_restore = tf.train.import_meta_graph(os.path.join(output_path, 'model.ckpt'))
+	with tf.Session() as sess:
+		saver_restore = tf.train.import_meta_graph(os.path.join(output_path, 'model.ckpt.meta'))
 		saver_restore.restore(sess, tf.train.latest_checkpoint(output_path))
 
 		innode = sess.graph.get_tensor_by_name("ImageTensor:0")
@@ -36,8 +39,8 @@ if __name__ == "__main__":
 			im_q = tf.expand_dims(im_q, 0)
 			lb_q = tf.expand_dims(lb_q, 0)
 
-			image = tf.image.resize_bilinear(im_q, input_shape[1:3], align_corner=False)
-			label = tf.image.resize_nearest_neighbor(lb_q, input_shape[1:3], align_corner=False)
+			image = tf.image.resize_bilinear(im_q, input_shape[1:3], align_corners=False)
+			label = tf.image.resize_nearest_neighbor(lb_q, input_shape[1:3], align_corners=False)
 
 			# image = image[0]
 			# image.set_shape(input_shape[1:])
@@ -52,10 +55,20 @@ if __name__ == "__main__":
 		coord = tf.train.Coordinator()
 		thread = tf.train.start_queue_runners(sess=sess, coord=coord)
 
+		count=0
 		try:
 			while not coord.should_stop():
+				count = count+1
 				results = sess.run(outnode, feed_dict = {innode : image.eval()})
 				print(results.shape)
+				results = results[0]
+				for i in range(3):
+					for j in range(3):
+						print(results[i, j, 0], end='')
+					print('\n', end = '')
+				im_save = Image.fromarray(results.astype('uint8'))
+				im_save.save("./visualize_replica/results_%d.png" % count)
+
 		except tf.errors.OutOfRangeError:
 			print("done")
 		finally:

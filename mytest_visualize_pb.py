@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-model = './export/exported_graph.pb'
+model = './export/exported_graph_replica_v2.pb'
 
 graph = tf.get_default_graph()
 graph_def = graph.as_graph_def()
