@@ -30,15 +30,11 @@ def model_fn(inputs):
 			conv2.append(tf.nn.conv2d(inputs[i], filter=weights, strides=[1,1,1,1], padding='SAME',
 						  dilations=[1,2,2,1], data_format='NHWC'))
 
-<<<<<<< HEAD
+
 		# tensor_concat=tf.concat([conv2[0], conv2[1]], 3)
 		# tensor_concat = tf.concat([tensor_concat, conv2[2]], 3)
 		# SNPE does not allow two sequential concat, it tries to merge but will encounter bug here.
 		tensor_concat = tf.concat([conv2[0], conv2[1], conv2[2]], 3)
-=======
-		tensor_concat=tf.concat([conv2[0], conv2[1]], 3)
-		tensor_concat = tf.concat([tensor_concat, conv2[2]], 3)
->>>>>>> origin/master
 
 	outputs = tf.identity (tensor_concat, name="NetOutput")
 
