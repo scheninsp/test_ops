@@ -18,10 +18,18 @@ def model_fn(inputs):
 
 		weights = tf.get_variable(name='laplacian_kernel', shape=laplacian_kernel.shape,
 							  dtype=tf.float32, initializer=tf.constant_initializer(laplacian_kernel))
+<<<<<<< HEAD
 
 		conv1 = tf.nn.depthwise_conv2d(inputs, filter=weights, strides=(1, 1, 1, 1),
 									padding='SAME', rate=(2, 2), data_format='NHWC')
 
 	outputs = tf.identity(conv1, name="NetOutput")
+=======
+
+		conv1 = tf.nn.depthwise_conv2d(inputs, filter=weights, strides=(1, 1, 1, 1),
+									padding='SAME', rate=(2, 2), data_format='NHWC')
+
+		outputs = tf.identity(conv1, name="NetOutput")
+>>>>>>> origin/master
 
 	return outputs

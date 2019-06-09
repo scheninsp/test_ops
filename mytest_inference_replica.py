@@ -2,8 +2,11 @@
 import tensorflow as tf
 import os
 from PIL import Image
+<<<<<<< HEAD
 #python 2.7
 from __future__ import print_function
+=======
+>>>>>>> origin/master
 
 if __name__ == "__main__":
 	os.environ['CUDA_VISIBLE_DEVICE'] = "0"
@@ -65,7 +68,11 @@ if __name__ == "__main__":
 				for i in range(3):
 					for j in range(3):
 						print(results[i, j, 0], end='')
+<<<<<<< HEAD
 					print('\n', end = '')
+=======
+					print('\n',end='')
+>>>>>>> origin/master
 				im_save = Image.fromarray(results.astype('uint8'))
 				im_save.save("./visualize_replica/results_%d.png" % count)
 
